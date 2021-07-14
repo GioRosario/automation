@@ -1,13 +1,12 @@
+timestamp=$(date +%Y%m%d%H%M%S)
 docker build . -t conda
-docker create -ti --name temp conda bash
-docker cp temp:/build .
-read -p 'Enter Quay.io username: ' uservar
-read -p 'Enter repository name: ' reposvar
-read -sp 'Enter Quay.io password: ' passvar
-echo $passvar > ~/password.txt
-cat ~/my_password.txt | docker login quay.io --username $uservar --password-stdin
-docker commit temp quay.io/$uservar/$reposvar
-docker push quay.io/$uservar/$reposvar
-docker rm -f temp
-docker image rm conda
-docker image rm quay.io/$uservar/$reposvar
+docker tag conda:latest $timestamp
+docker create -ti --name conda conda bash
+docker cp conda:/build .
+echo $QUAY_PASS > ~/password.txt
+cat ~/password.txt | docker login quay.io --username $QUAY_USER --password-stdin
+docker commit temp quay.io/$QUAY_REPOS
+docker push quay.io/$QUAY_REPOS
+docker rm -f conda
+docker rmi $tag
+docker image rm quay.io/$QUAY_REPOS
