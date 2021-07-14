@@ -11,7 +11,8 @@ ENV OMPI_MCA_opal_cuda_support=true
 RUN yum install curl mesa-libGL -y && yum clean all && \
     conda config --set allow_conda_downgrades true && \
     conda install conda -y && \
-    conda create -n ${env_name} ${channels} --override-channels -y python=${python_version} conda-pack ${pkg} ${extra_p>    conda init "bash"
+    conda create -n ${env_name} ${channels} --override-channels -y python=${python_version} conda-pack ${pkg} ${extra_packages} && \   
+    conda init "bash"
 
 SHELL ["bash", "-lc"]
 RUN conda activate ${env_name} && conda remove -n ${env_name} perl --force -y && sudo mkdir /build && \
