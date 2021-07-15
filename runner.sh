@@ -1,9 +1,8 @@
 user=nsls2
 image="condaforge"
 timestamp=$(date +%Y%m%d%H%M%S)
-docker image build --no-cache \
-                        -t $user/${image}:latest \
-                        -t $user/${image}:${timestamp} \ .
+docker image build . -t $user/${image}:latest \
+                     -t $user/${image}:${timestamp}
 docker create -ti --name conda conda bash
 docker cp conda:/build .
 echo $QUAY_PASS > ~/password.txt
