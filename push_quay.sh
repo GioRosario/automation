@@ -1,4 +1,5 @@
 #!/bin/bash
+
 docker run -it --name extra-container $timestamp_holder
 echo $QUAY_PASSWORD | docker login quay.io -u $QUAY_USERNAME --password-stdin
 docker commit extra-container quay.io/$QUAY_REPO
