@@ -7,6 +7,13 @@ user=nsls2
 image="nsls2-analysis-2021-1.2"
 timestamp=$(date +%Y%m%d%H%M%S)
 env_name="nsls2-analysis-2021-1.2"
+
+if [ -e nsls2-analysis-2021-1.2.tar.gz ]
+then rm nsls2-analysis-2021-1.2.tar.gz
+     rm nsls2-analysis-2021-1.2.yml
+     rm nsls2-analysis-2021-1.2-sha256sum.txt
+fi
+
 docker image build . -t $user/${image}:latest \
                      -t $user/${image}:${timestamp}
 docker run -it --rm -v $PWD:/build $user/${image}:${timestamp} bash -l /build/export.sh
@@ -18,13 +25,16 @@ export latest_holder
 export timestamp_holder
 
 ## Push to Quay
-# chmod +x push_quay.sh
-# ./push_quay.sh
+#chmod +x push_quay.sh
+#./push_quay.sh
 
 ## Push to Dockerhub
 #chmod +x push_dockerhub.sh
 #./push_dockerhub.sh
 
 ## Push to GHCR
-# chmod +x push_ghcr.sh
-# ./push_ghcr.sh
+#chmod +x push_ghcr.sh
+#./push_ghcr.sh
+
+docker rmi $latest_holder
+docker rmi $timestamp_holder
