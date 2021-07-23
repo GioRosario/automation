@@ -4,6 +4,4 @@ echo $GITHUB_TOKEN | docker login ghcr.io --username $GITHUB_USERNAME --password
 docker tag $timestamp_holder ghcr.io/$GITHUB_USERNAME/$timestamp_holder
 docker image push ghcr.io/$GITHUB_USERNAME/$timestamp_holder
 
-docker rmi $latest_holder
-docker rmi $timestamp_holder
 docker rmi ghcr.io/$GITHUB_USERNAME/$timestamp_holders
