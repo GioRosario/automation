@@ -6,6 +6,3 @@ docker commit extra-container quay.io/$QUAY_REPO
 docker push quay.io/$QUAY_REPO
 docker rm extra-container
 docker image rm quay.io/$QUAY_REPO
-
-#docker rmi $latest_holder
-#docker rmi $timestamp_holder
