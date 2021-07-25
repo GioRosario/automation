@@ -1,30 +1,43 @@
 #!/bin/bash
+
 set -e
 
-sudo touch requirements.txt
 user=nsls2
-image="condaforge"
+image="nsls2-analysis-2021-1.2"
 timestamp=$(date +%Y%m%d%H%M%S)
 env_name="nsls2-analysis-2021-1.2"
-#docker build . -t conda --target build
-#docker build . -t temp-image --target export
-#docker image build . -t $user/${image}:latest \
- #                  -t $user/${image}:${timestamp}
-#docker run -it --rm -v $PWD:/build $user/${image}:${timestamp} bash -l /build/export.sh
-#docker create -ti --name temp-container temp-image bash
-#docker cp temp-container:/build .
+
+if [ -f "nsls2-analysis-2021-1.2.tar.gz" ]
+then
+        read -p "These tar.gz and yml files already exist. Would you like to replace the existing files? " REPLACE
+        if [ "$REPLACE" == 'yes' ] || [ "$REPLACE" == 'y' ]
+                then rm nsls2-analysis-2021-1.2.tar.gz;rm nsls2-analysis-2021-1.2.yml;rm nsls2-analysis-2021-1.2-sha256sum.txt;echo "Old files have been removed."
+        elif [ "$REPLACE" == 'no' ] || [ "$REPLACE" == 'n' ]
+                then mkdir nsls2-analysis-2021-1.2-old-${timestamp};mv nsls2-analysis-2021-1.2.tar.gz nsls2-analysis-2021-1.2-old-${timestamp};
+                     mv nsls2-analysis-2021-1.2.yml nsls2-analysis-2021-1.2-old-${timesstamp};mv nsls2-analysis-2021-1.2-sha256sum.txt nsls2-analysis-2021-1.2-old-${timestamp};
+                     echo "A directory has been created and the old files have been moved into this directory."
+        fi
+fi
+
+docker image build . -t $user/${image}:latest \
+                     -t $user/${image}:${timestamp}
+docker run -it --rm -v $PWD:/build $user/${image}:${timestamp} bash -l /build/export.sh
 sudo chown -v $USER: ${env_name}.tar.gz ${env_name}-sha256sum.txt ${env_name}.yml
-exit 1
 
-echo $QUAY_PASS > ~/password.txt
-cat ~/password.txt | docker login quay.io --username $QUAY_USER --password-stdin
-docker commit temp quay.io/$QUAY_REPOS
-docker push quay.io/$QUAY_REPOS
-docker rm -f temp-container
-docker image rm $user/${image}:latest
-#docker image rm temp-image
+export latest_holder="$user/${image}:latest"
+export timestamp_holder="$user/${image}:${timestamp}"
 
-#user=nsls2
-#image="condaforge"
-#timestamp=$(date +%Y%m%d%H%M%S)
-#docker image build . -t $user/${image}:latest \
+## Push to Quay
+#chmod +x push_quay.sh
+#./push_quay.sh
+
+## Push to Dockerhub
+#chmod +x push_dockerhub.sh
+#./push_dockerhub.sh
+
+## Push to GHCR
+#chmod +x push_ghcr.sh
+#./push_ghcr.sh
+
+docker rmi $latest_holder
+docker rmi $timestamp_holder
